@@ -13,7 +13,7 @@ function GetApiHostname()
 
 function GetApiNamespace()
 {
-	return "http://clients.mindbodyonline.com/0_5";
+	return "http://clients.mindbodyonline.com/api/0_5";
 }
 
 // helper functions
