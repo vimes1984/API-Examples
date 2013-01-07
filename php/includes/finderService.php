@@ -82,14 +82,23 @@ class MBFinderService extends MBAPIService
 	 * @param SourceCredentials $credentials A source credentials object to use with this call
 	 * @return object The raw result of the SOAP call
 	 */
-	public function AddFinderUser($email, $password, $firstName, $lastName, $partnerID, $locationID = null, $PageSize = null, $CurrentPage = null, $XMLDetail = XMLDetail::Full, $Fields = NULL, SourceCredentials $credentials = null)
+	public function AddOrUpdateFinderUsers($updateAction = null, $email, $password, $firstName, $lastName, $partnerID, $locationID = null, $PageSize = null, $CurrentPage = null, $XMLDetail = XMLDetail::Full, $Fields = NULL, SourceCredentials $credentials = null)
 	{		
 		$additions = array();
-		$additions['Email'] = $email;
-		$additions['Password'] = $password;
-		$additions['FirstName'] = $firstName;
-		$additions['LastName'] = $lastName;
+		if (isset($updateAction))
+		{
+			$additions['UpdateAction'] = $updateAction;
+		}
 		$additions['PartnerID'] = $partnerID;
+		
+		$finderUser = array();
+		$finderUser['Email'] = $email;
+		$finderUser['Password'] = $password;
+		$finderUser['FirstName'] = $firstName;
+		$finderUser['LastName'] = $lastName;
+		
+		$additions['FinderUsers'] = $finderUser;
+		
 		if (isset($locationID))
 		{
 			$additions['LocationID'] = $locationID;
@@ -99,7 +108,7 @@ class MBFinderService extends MBAPIService
 		
 		try
 		{
-			$result = $this->client->AddFinderUser($params);
+			$result = $this->client->AddOrUpdateFinderUsers($params);
 		}
 		catch (SoapFault $fault)
 		{
