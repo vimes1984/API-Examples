@@ -5,7 +5,8 @@ class MBFinderService extends MBAPIService
 {	
 	function __construct($debug = false)
 	{
-		$serviceUrl = "http://" . GetApiHostname() . "/0_5/FinderService.asmx?wsdl";
+		$endpointUrl = "https://" . GetApiHostname() . "/0_5/FinderService.asmx";
+		$wsdlUrl = $endpointUrl . "?wsdl";
 	
 		$this->debug = $debug;
 		$option = array();
@@ -13,7 +14,8 @@ class MBFinderService extends MBAPIService
 		{
 			$option = array('trace'=>1);
 		}
-		$this->client = new soapclient($serviceUrl, $option);
+		$this->client = new soapclient($wsdlUrl, $option);
+		$this->client->__setLocation($endpointUrl);
 	}
 	
 	/**

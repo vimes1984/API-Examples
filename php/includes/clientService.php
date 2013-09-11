@@ -5,7 +5,8 @@ class MBClientService extends MBAPIService
 {
 	function __construct($debug = false)
 	{
-		$serviceUrl = "http://" . GetApiHostname() . "/0_5/ClientService.asmx?wsdl";
+		$endpointUrl = "https://" . GetApiHostname() . "/0_5/ClientService.asmx";
+		$wsdlUrl = $endpointUrl . "?wsdl";
 	
 		$this->debug = $debug;
 		$option = array();
@@ -13,7 +14,8 @@ class MBClientService extends MBAPIService
 		{
 			$option = array('trace'=>1);
 		}
-		$this->client = new soapclient($serviceUrl, $option);
+		$this->client = new soapclient($wsdlUrl, $option);
+		$this->client->__setLocation($endpointUrl);
 	}
 	
 	public function GetClients(array $clientIDs, $PageSize = null, $CurrentPage = null, $XMLDetail = XMLDetail::Full, $Fields = null, SourceCredentials $credentials = null)
