@@ -59,13 +59,13 @@ def SetEnumerable(service, enum, value):
 
 def FillDefaultCredentials(service, request, siteIDs):
     sourceCreds = service.factory.create('SourceCredentials')
-    sourceCreds.SourceName = "kcdemo"
-    sourceCreds.Password = "klabin21"
+    sourceCreds.SourceName = source
+    sourceCreds.Password = password
     sourceCreds.SiteIDs.int = siteIDs
 
     userCreds = service.factory.create('UserCredentials')
-    userCreds.Username = "Siteowner"
-    userCreds.Password = "apitest1234"
+    userCreds.Username = user
+    userCreds.Password = password
     userCreds.SiteIDs.int = siteIDs
 
     request.SourceCredentials = sourceCreds
