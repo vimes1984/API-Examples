@@ -7,7 +7,7 @@ class MBClassService extends MBAPIService
 	{
 		$endpointUrl = "https://" . GetApiHostname() . "/0_5/ClassService.asmx";
 		$wsdlUrl = $endpointUrl . "?wsdl";
-	
+
 		$this->debug = $debug;
 		$option = array();
 		if ($debug)
@@ -17,7 +17,7 @@ class MBClassService extends MBAPIService
 		$this->client = new soapclient($wsdlUrl, $option);
 		$this->client->__setLocation($endpointUrl);
 	}
-	
+
 	/**
 	 * Returns the raw result of the MINDBODY SOAP call.
 	 * @param int $PageSize
@@ -38,20 +38,20 @@ class MBClassService extends MBAPIService
 		{
 			$additions['ClassIDs'] = $classIDs;
 		}
-		
+
 		$params = $this->GetMindbodyParams($additions, $this->GetCredentials($credentials), $XMLDetail, $PageSize, $CurrentPage, $Fields);
-		
+
 		$result = $this->client->AddClientsToClasses($params);
-		
+
 		if ($this->debug)
 		{
 			DebugRequest($this->client);
 			DebugResponse($this->client, $result);
 		}
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * Returns the raw result of the MINDBODY SOAP call.
 	 * @param int $PageSize
@@ -61,7 +61,7 @@ class MBClassService extends MBAPIService
 	 * @param SourceCredentials $credentials A source credentials object to use with this call
 	 * @return object The raw result of the SOAP call
 	 */
-	public function GetClasses(array $classDescriptionIDs, array $classIDs, array $staffIDs, $startDate, $endDate, $clientID = null, $PageSize = null, $CurrentPage = null, $XMLDetail = XMLDetail::Full, $Fields = NULL, SourceCredentials $credentials = null)
+	public function GetClasses(array $classDescriptionIDs, array $classIDs, array $staffIDs, $startDate, $endDate, $clientID = null, $PageSize = null, $CurrentPage = null, $XMLDetail = XMLDetail::Full, $Fields = NULL, SourceCredentials $credentials = null, UserCredentials $usercredentials = null)
 	{		
 		$additions = array();
 		if (isset($classDescriptionIDs))
@@ -88,9 +88,9 @@ class MBClassService extends MBAPIService
 		{
 			$additions['ClientID'] = $clientID;
 		}
-		
+
 		$params = $this->GetMindbodyParams($additions, $this->GetCredentials($credentials), $XMLDetail, $PageSize, $CurrentPage, $Fields);
-		
+
 		try
 		{
 			$result = $this->client->GetClasses($params);
@@ -101,16 +101,16 @@ class MBClassService extends MBAPIService
 			// <xmp> tag displays xml output in html
 			echo '</xmp><br/><br/> Error Message : <br/>', $fault->getMessage(); 
 		}
-		
+
 		if ($this->debug)
 		{
 			DebugRequest($this->client);
 			DebugResponse($this->client, $result);
 		}
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * Returns the raw result of the MINDBODY SOAP call.
 	 * @param string $XMLDetail
@@ -141,9 +141,9 @@ class MBClassService extends MBAPIService
 		{
 			$additions['EndClassDateTime'] = $endDate->format(DateTime::ATOM);
 		}
-		
+
 		$params = $this->GetMindbodyParams($additions, $this->GetCredentials($credentials), $XMLDetail, $PageSize, $CurrentPage, $Fields);
-		
+
 		try
 		{
 			$result = $this->client->GetClassDescriptions($params);
@@ -153,14 +153,13 @@ class MBClassService extends MBAPIService
 			DebugResponse($result);
 			echo '</xmp><br/><br/> Error Message : <br/>', $fault->getMessage(); 
 		}
-		
+
 		if ($this->debug)
 		{
 			DebugRequest($this->client);
 			DebugResponse($this->client, $result);
 		}
-		
+
 		return $result;
 	}
 }
-

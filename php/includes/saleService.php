@@ -1,10 +1,8 @@
 <?php
-require_once("mbapi.php");
+require_once("mbApi.php");
 
-class MBSaleService extends MBAPIService
-{	
-	function __construct($debug = false)
-	{
+class MBSaleService extends MBAPIService{	
+	function __construct($debug = false){
 		$endpointUrl = "https://" . GetApiHostname() . "/0_5/SaleService.asmx";
 		$wsdlUrl = $endpointUrl . "?wsdl";
 	
@@ -27,8 +25,7 @@ class MBSaleService extends MBAPIService
 	 * @param SourceCredentials $credentials A source credentials object to use with this call
 	 * @return object The raw result of the SOAP call
 	 */
-	public function GetServices(array $programIDs = array(), array $sessionTypeIDs = array(), array $serviceIDs = array(), int $classID = null, int $classScheduleID = null, bool $sellOnline = null, int $locationID = null, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL)
-	{
+	public function GetServices(array $programIDs = array(), array $sessionTypeIDs = array(), array $serviceIDs = array(), int $classID = null, int $classScheduleID = null, bool $sellOnline = null, int $locationID = null, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL){
 		$additions = array();
 		if (isset($programIDs))
 		{
@@ -96,8 +93,7 @@ class MBSaleService extends MBAPIService
 	 * @param string $Fields
 	 * @return An array of Sale objects that match the current filter settings
 	 */
-	public function GetSales($saleID, $saleStartDate, $saleEndDate, $paymentMethodID, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL) 
-	{
+	public function GetSales($saleID, $saleStartDate, $saleEndDate, $paymentMethodID, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL) {
 		$result = $this->GetSalesRaw($saleID, $saleStartDate, $saleEndDate, $paymentMethodID, $credentials, $XMLDetail, $PageSize, $CurrentPage, $Fields);
 		
 		$properties = get_object_vars($result->GetSalesResult->Sales);
@@ -137,8 +133,7 @@ class MBSaleService extends MBAPIService
 	 * @param string $Fields
 	 * @return object The raw result of the SOAP call
 	 */
-	public function GetSalesRaw($saleID, $saleStartDate, $saleEndDate, $paymentMethodID, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL)
-	{
+	public function GetSalesRaw($saleID, $saleStartDate, $saleEndDate, $paymentMethodID, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL){
 		$additions = array();
 		if (isset($saleID)) {
 			$additions['SaleID'] = $saleID;
@@ -183,8 +178,7 @@ class MBSaleService extends MBAPIService
 	 * @param SourceCredentials $credentials A source credentials object to use with this call
 	 * @return object The raw result of the SOAP call
 	 */
-	public function CheckoutShoppingCart($cartID = null, $clientID, $Test = false, array $cartItems, array $payments, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL)
-	{
+	public function CheckoutShoppingCart($cartID = null, $clientID, $Test = false, array $cartItems, array $payments, SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = NULL, $CurrentPage = NULL, $Fields = NULL){
 		$additions = array();
 		$additions['ClientID'] = $clientID;
 		$additions['CartItems'] = $cartItems;
@@ -217,6 +211,62 @@ class MBSaleService extends MBAPIService
 		{
 			DebugRequest($this->client);
 			DebugResponse($this->client, $result);
+		}
+		
+		return $result;
+	}
+	/**
+	 * Returns the raw result of the MINDBODY SOAP call.
+	 * @param $ProductIDs array(string => "")
+	 * @param $SearchText string 
+	 * @param $SearchDomain string 
+	 * @param $CategoryIDs array(int => "")
+	 * @param $SubCategoryIDs array(int => "")
+	 * @param $SellOnline  Boolean
+	 * @param $LocationID  int
+	 * @param SourceCredentials $credentials A source credentials object to use with this call
+	 * @return object The raw result of the SOAP call
+	 */
+	public function GetProducts($ProductIDs = array(), $SearchText = NULL, $SearchDomain = NULL, $CategoryIDs =  array(), $SubCategoryIDs = array(), $SellOnline = false, $LocationID = NULL,  SourceCredentials $credentials = null, $XMLDetail = XMLDetail::Full, $PageSize = 150, $CurrentPage = 0){
+		$additions = array();
+		if (isset($ProductIDs)) {
+			$additions['ProductIDs'] = $ProductIDs;
+		}
+		if (isset($SearchText)) {
+			$additions['SearchText'] = $SearchText;
+		}
+		if (isset($SearchDomain)) {
+			$additions['SearchDomain'] = $SearchDomain;
+		}
+		if (isset($CategoryIDs)) {
+			$additions['CategoryIDs'] = $CategoryIDs;
+		}
+		if (isset($SubCategoryIDs)) {
+			$additions['SubCategoryIDs'] = $SubCategoryIDs;
+		}
+		if (isset($SellOnline)) {
+			$additions['SellOnline'] = $SellOnline;
+		}
+		if (isset($LocationID)) {
+			$additions['LocationID'] = $LocationID;
+		}				
+		$params = $this->GetMindbodyParams($additions, $this->GetCredentials($credentials), $XMLDetail, $PageSize, $CurrentPage, $Fields);
+		
+		try {
+			$result = $this->client->GetProducts($params);
+		} catch (SoapFault $fault) {
+			// <xmp> tag displays xml output in html
+			echo 'Request : <br/><xmp>',
+			$this->client->__getLastRequest(),
+			'</xmp><br/><br/> Error Message : <br/>',
+			$fault->getMessage(); 
+		}
+		
+		if ($this->debug) {
+			echo 'Request : <br/><xmp>', $this->client->__getLastRequest(), '</xmp><br/><br/>';
+			echo('<h2>GetSales Result</h2><pre>');
+			print_r($result);
+			echo("</pre>");
 		}
 		
 		return $result;
